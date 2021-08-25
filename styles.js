@@ -2,7 +2,14 @@ const defaultStyle = {
     alignment: 'left',
     font: 'Roboto',
     fontSize: 12,
-    lineHeight: 1.5
+    lineHeight: 1.4
+};
+
+const defaultKeywords = {
+    info: ['info', 'note', 'information'],
+    hint: ['hint', 'tip', 'conseil', 'indice', 'suggestion'],
+    warning: ['warning', 'caution', 'watch-out', 'attention', 'avertissement'],
+    danger: ['danger', 'error', 'issue', 'problem', 'alert', 'erreur', 'problème', 'alerte']
 };
 
 const rem = defaultStyle.fontSize;
@@ -36,12 +43,36 @@ const styleSheet = {
         color: '#6a737b'
     },
     paragraph: {
-        marginBottom: 0.5 * rem
+        marginBottom: 0.6 * rem
     },
     blockquote: {
-        fillColor: '#f6f8fa',
+        fillColor: '#f9fafb',
+        borderColor: '#6b7280',
         lineHeight: 1.4,
-        marginBottom: 0.7 * rem
+        marginBottom: 0.7 * rem,
+        paddingLeft: 6,
+        paddingRight: 4,
+        paddingTop: 4,
+        paddingBottom: 0
+    },
+    info: {
+        fillColor: '#eff6ff',
+        borderColor: '#3b82f6'
+    },
+    hint: {
+        fillColor: '#ecfdf5',
+        borderColor: '#10b981'
+    },
+    warning: {
+        fillColor: '#fffbeb',
+        borderColor: '#f59e0b'
+    },
+    danger: {
+        fillColor: '#fef2f2',
+        borderColor: '#ef4444'
+    },
+    horizontalRule: {
+        borderColor: '#d1d1d1'
     },
     table: {
         marginBottom: 0.7 * rem,
@@ -68,6 +99,7 @@ const styleSheet = {
         preserveLeadingSpaces: true,
         marginBottom: 0.7 * rem,
         lineHeight: 1.357,
+        padding: 4
     },
     code: {
         font: 'UbuntuMono'
@@ -129,4 +161,4 @@ const styleSheet = {
     }
 };
 
-module.exports = {defaultStyle, styleSheet};
+module.exports = {defaultStyle, defaultKeywords, styleSheet};

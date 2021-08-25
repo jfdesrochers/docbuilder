@@ -19,8 +19,27 @@ const md = require('markdown-it')({
     }
 });
 
+// Set to true to generate intermediary debug files.
+const DEBUG = false;
+
+function _dStringifyParsed(parsed) {
+    let cache = new Set();
+    let result = JSON.stringify(parsed, function(_, value) {
+        if (typeof value === 'object' && value !== null) {
+            if (cache.has(value)) {
+                return;
+            }
+            cache.add(value);
+        }
+        return value;
+    }, 2);
+    cache.clear();
+    cache = null;
+    return result;
+}
+
 const { NodeParser } = require('./nodes2dd');
-const { styleSheet, defaultStyle } = require('./styles');
+const { styleSheet, defaultStyle, defaultKeywords } = require('./styles');
 
 const fonts = {
     Roboto: {
@@ -42,9 +61,20 @@ function markdownToPDF(inputFile, outputFile, pageSize, pageMargins) {
     pageMargins = pageMargins || 36;
 
     const mdcontent = fs.readFileSync(inputFile, 'utf-8');
+
     const htmlcontent = md.render(mdcontent);
+    if (DEBUG) fs.writeFileSync(path.join(__dirname, 'debug.html'), htmlcontent, 'utf-8');
+
     const parsedcontent = parse5.parse(htmlcontent);
-    const nodeParser = new NodeParser(path.dirname(inputFile), pageSize, pageMargins);
+    if (DEBUG) fs.writeFileSync(path.join(__dirname, 'debug_parsed.json'), _dStringifyParsed(parsedcontent), 'utf-8');
+
+    const nodeParser = new NodeParser({
+        mdPath: path.dirname(inputFile),
+        pageSize,
+        pageMargins,
+        styles: styleSheet,
+        keywords: defaultKeywords
+    });
 
     const dd = {
         content: nodeParser.parseNodes(parsedcontent.childNodes[0].childNodes[1].childNodes),
@@ -53,6 +83,8 @@ function markdownToPDF(inputFile, outputFile, pageSize, pageMargins) {
         styles: styleSheet,
         defaultStyle
     };
+
+    if (DEBUG) fs.writeFileSync(path.join(__dirname, 'debug_dd.json'), JSON.stringify(dd, null, 2), 'utf-8');
 
     const printer = new PDFPrinter(fonts)
     const pdfDoc = printer.createPdfKitDocument(dd);

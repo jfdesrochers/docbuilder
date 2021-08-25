@@ -2,10 +2,8 @@
   "name": "docbuilder",
   "version": "1.2.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "md2pdf.js",
+  "scripts": {},
   "keywords": [],
   "author": "Jean-Francois Desrochers",
   "license": "ISC",
