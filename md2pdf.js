@@ -25,11 +25,12 @@ program.version(version)
     .option('-o, --output <path>', 'full path to the PDF file to output. If omitted, the PDF file will have the same name and path as the markdown input. If the input is a folder, this argument is ignored.')
     .option('-s, --size <pagesize>', 'sets a custom page size. Specify width,height in points. Example: -s 612,792 for portrait letter.')
     .option('-m, --margins <margins>', 'sets custom margins. Specify all four margins in points, like left,top,right,bottom. Example: -m 36,48,36,48.')
+    .option('-z --imgsize <size>', 'sets a maximum size for images. Specify either in points (like -z 300) or in percentage of page size (like -z 50%).')
     .parse();
 
 const options = program.opts();
 
-let pageSize, pageMargins;
+let pageSize, pageMargins, imgMaxSize;
 
 if (options.size) {
     let size = options.size.split(',');
@@ -59,6 +60,26 @@ if (options.margins) {
     }
 }
 
+if (options.imgsize) {
+    let isPercent = false;
+    if (options.imgsize.endsWith('%')) {
+        isPercent = true;
+        options.imgsize = options.imgsize.slice(0, options.imgsize.length - 1);
+    }
+    imgMaxSize = parseInt(options.imgsize);
+    if (isNaN(imgMaxSize)) {
+        console.error('ERROR: The imgsize argument must be a valid number or percentage. Ex.: 300 or 50%');
+        process.exit(1);
+    }
+    if (isPercent) {
+        if (imgMaxSize >= 100) {
+            console.error('ERROR: The imgsize must be less than 100%.');
+            process.exit(1);
+        }
+        imgMaxSize = imgMaxSize / 100;
+    }
+}
+
 try {
     let info = fs.statSync(options.input, {throwIfNoEntry: false});
     if (!info) {
@@ -69,7 +90,7 @@ try {
         let items = walk(options.input, '.md');
         for (let item of items) {
             let output = item.replace(/\.md$/, '.pdf');
-            markdownToPDF(item, output, pageSize, pageMargins);
+            markdownToPDF(item, output, pageSize, pageMargins, imgMaxSize);
             console.log(path.basename(item), '->', path.basename(output));
         }
     } else {
@@ -81,7 +102,7 @@ try {
             }
         }
         output = output || options.input.replace(/\.md$/, '.pdf');
-        markdownToPDF(options.input, output, pageSize, pageMargins);
+        markdownToPDF(options.input, output, pageSize, pageMargins, imgMaxSize);
         console.log(path.basename(options.input), '->', path.basename(output));
     }
 } catch (err) {

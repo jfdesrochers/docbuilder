@@ -2,12 +2,13 @@ const path = require('path');
 const { getInfofromJPEGfile, getInfofromPNGfile, convertImageDimsForPrint } = require('./imgtools');
 
 class NodeParser {
-    constructor({ mdPath, pageSize, pageMargins, styles, keywords }) {
+    constructor({ mdPath, pageSize, pageMargins, styles, keywords, imgMaxSize }) {
         this.mdPath = mdPath || '';
         this.pageWidth = pageSize.width;
         this.pageHeight = pageSize.height;
         this.styles = styles;
         this.keywords = keywords;
+        this.imgMaxSize = imgMaxSize;
         if (Array.isArray(pageMargins)) {
             if (pageMargins.length === 4) {
                 this.marginLeft = pageMargins[0];
@@ -361,7 +362,10 @@ class NodeParser {
 
         [imgWidth, imgHeight] = convertImageDimsForPrint(imgWidth, imgHeight, imgDPI);
 
-        let fitDims = Math.min(imgWidth, this.pageWidth - this.marginLeft - this.marginRight);
+        const adjustedWidth = this.pageWidth - this.marginLeft - this.marginRight;
+        const overrideWidth = this.imgMaxSize ? this.imgMaxSize < 1 ? adjustedWidth * this.imgMaxSize : this.imgMaxSize : adjustedWidth;
+
+        let fitDims = Math.min(imgWidth, overrideWidth);
 
         if (alt) {
             return [

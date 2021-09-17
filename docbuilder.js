@@ -6,6 +6,7 @@ const path = require('path');
 const hljs = require('highlight.js');
 const md = require('markdown-it')({
     html: false,
+    linkify: true,
     highlight: function (str, lang) {
         if (lang && hljs.getLanguage(lang)) {
             try {
@@ -56,7 +57,7 @@ const fonts = {
     },
 }
 
-function markdownToPDF(inputFile, outputFile, pageSize, pageMargins) {
+function markdownToPDF(inputFile, outputFile, pageSize, pageMargins, imgMaxSize) {
     pageSize = pageSize || {width: 612, height: 792};
     pageMargins = pageMargins || 36;
 
@@ -73,7 +74,8 @@ function markdownToPDF(inputFile, outputFile, pageSize, pageMargins) {
         pageSize,
         pageMargins,
         styles: styleSheet,
-        keywords: defaultKeywords
+        keywords: defaultKeywords,
+        imgMaxSize
     });
 
     const dd = {

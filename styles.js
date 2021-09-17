@@ -8,7 +8,7 @@ const defaultStyle = {
 const defaultKeywords = {
     info: ['info', 'note', 'information'],
     hint: ['hint', 'tip', 'conseil', 'indice', 'suggestion'],
-    warning: ['warning', 'caution', 'watch-out', 'attention', 'avertissement'],
+    warning: ['warning', 'caution', 'watch-out', 'important', 'attention', 'avertissement'],
     danger: ['danger', 'error', 'issue', 'problem', 'alert', 'erreur', 'problème', 'alerte']
 };
 
@@ -21,7 +21,8 @@ const styleSheet = {
     heading: {
         bold: true,
         lineHeight: 1.25,
-        marginBottom: 0.5 * rem,
+        marginTop: 0.5 * rem,
+        marginBottom: 0.5 * rem
     },
     h1: {
         fontSize: 2 * rem
